@@ -1,46 +1,21 @@
-from typing import List
-from uuid import uuid4
 from fastapi import FastAPI
-from models import User, Gender, Role
 
-"""
-create instance FastAPI
-"""
 app = FastAPI()
 
 
-"""
-create db
-"""
-db: List[User] = [
-    User(
-        id=uuid4(),
-        first_name='Gilza',
-        last_name='Goltz',
-        gender=Gender.female,
-        roles=[Role.student]
-    ),
-    User(
-        id=uuid4(),
-        first_name='Alex',
-        last_name='Jones',
-        gender=Gender.male,
-        roles=[Role.admin]
-    )
-]
+user_db = {
+    'jack': {'username': 'jack', 'date_joined': '2023-01-08', 'location': 'Toronto', 'age': 28},
+    'jill': {'username': 'jill', 'date_joined': '2023-01-07', 'location': 'NY', 'age': 29},
+    'jane': {'username': 'jane', 'date_joined': '2023-01-06', 'location': 'LA', 'age': 19}
+}
 
 
-'''
-get func extract data with get from root and return json
-object in dictionary
-'''
+@app.get('/users')
+def get_users():
+    user_list = list(user_db.values())
+    return user_list
 
 
-@app.get('/')
-async def root():
-    return {'Hello': 'Goltz'}
-
-
-@app.get('/api/v1/users')
-async def fetch_users():
-    return db
+@app.get('/users/{username}')
+def get_users_path(username: str):
+    return user_db[username]
